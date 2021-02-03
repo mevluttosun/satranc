@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1608465350 source:/home/mevlutt/c-calisma/Satranc-Odev/satranc.c
+	<stdio.h>
+	<stdlib.h>
+	"satranc.h"
+
+1608833207 source:/home/mevlutt/c-calisma/Satranc-Odev/main.c
+	<stdio.h>
+	<stdlib.h>
+	"chessLib.h"
+
+1608467610 /home/mevlutt/c-calisma/Satranc-Odev/satranc.h
+
+1608833207 source:/home/mevlutt/c-calisma/Satranc-Odev/chessLib.c
+	<stdio.h>
+	<stdlib.h>
+	"chessLib.h"
+
+1608482340 /home/mevlutt/c-calisma/Satranc-Odev/chessLib.h
+
