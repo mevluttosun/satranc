@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "chessLib.h"
-int **createBoard() {
+
+int **createBoard() { //creating empty matrix
     int **v =(int **)calloc(8,sizeof(int *));
     int i;
 
@@ -11,7 +12,7 @@ int **createBoard() {
 
     return v;
 }
-void cleanBoard(int **v) {
+void cleanBoard(int **v) { //cleaning the matrix
     int i,j;
 
     for(i=0; i<8; i++) {
@@ -20,12 +21,12 @@ void cleanBoard(int **v) {
         }
     }
 }
-void printBoard(int **v) {
+void printBoard(int **v) { //printing board and checking the boundry
     int i,j;
 
     for(i=0; i<8; i++) {
         for(j=0; j<8; j++) {
-            printf("%d \t",v[i][j]);
+            printf("%d    ",v[i][j]);
         }
 
         puts("");
@@ -33,78 +34,78 @@ void printBoard(int **v) {
     }
 }
 
-struct poz {
-    short yatay;
-    char dusey;
+struct pos {   //positions
+    short horizontal;
+    char vertical;
 };
-struct poz setPoz(char dus,short yat) {
-    struct poz poz1;
-    poz1.yatay=yat;
-    poz1.dusey=dus;
-    return poz1;
+struct pos setPos(char dus,short yat) {
+    struct pos pos1;
+    pos1.horizontal=yat;
+    pos1.vertical=dus;
+    return pos1;
 }
-void addBoard(int **board,struct poz p,short val) {
+void addBoard(int **board,struct pos p,short val) {  //adding pieces according to value with board upside down
 
-    short row=8-p.yatay;
-    short col=(int)(p.dusey)-65;
+    short row=8-p.horizontal;
+    short col=(int)(p.vertical)-65;
 
     if(col<0 ||row <0 || col>7 || row>7) { //controlling out of board
     } else {
         board[row][col]=val;
     }
 }
-struct poz *haraketSah(struct poz ilkpoz) {
-    struct poz *sonuc=malloc(8*sizeof(struct poz));
+struct pos *moveKing(struct pos firstPos) {
+    struct pos *result=malloc(8*sizeof(struct pos));
 
-    sonuc[0]=setPoz((char)(ilkpoz.dusey),ilkpoz.yatay+1);
-    sonuc[1]=setPoz((char)(ilkpoz.dusey),ilkpoz.yatay-1);
-    sonuc[2]=setPoz((char)(ilkpoz.dusey +1),ilkpoz.yatay);
-    sonuc[3]=setPoz((char)(ilkpoz.dusey -1),ilkpoz.yatay);
-    sonuc[4]=setPoz((char)(ilkpoz.dusey +1),ilkpoz.yatay+1);
-    sonuc[5]=setPoz((char)(ilkpoz.dusey -1),ilkpoz.yatay-1);
-    sonuc[6]=setPoz((char)(ilkpoz.dusey -1),ilkpoz.yatay+1);
-    sonuc[7]=setPoz((char)(ilkpoz.dusey +1),ilkpoz.yatay-1);
-    return sonuc;
+    result[0]=setPos((char)(firstPos.vertical),firstPos.horizontal+1);
+    result[1]=setPos((char)(firstPos.vertical),firstPos.horizontal-1);
+    result[2]=setPos((char)(firstPos.vertical +1),firstPos.horizontal);
+    result[3]=setPos((char)(firstPos.vertical -1),firstPos.horizontal);
+    result[4]=setPos((char)(firstPos.vertical +1),firstPos.horizontal+1);
+    result[5]=setPos((char)(firstPos.vertical -1),firstPos.horizontal-1);
+    result[6]=setPos((char)(firstPos.vertical -1),firstPos.horizontal+1);
+    result[7]=setPos((char)(firstPos.vertical +1),firstPos.horizontal-1);
+    return result;
 }
-struct poz *haraketVezir(struct poz ilkpoz) {
-    struct poz *sonuc=malloc(64*sizeof(struct poz));
+struct pos *moveQueen(struct pos firstPos) {
+    struct pos *result=malloc(64*sizeof(struct pos));
     int moveCount=0;
     int i,j;
 
-    for(i=0; i<8; i++) { //dusey gitme
-        if(i !=ilkpoz.yatay-1) {
-            sonuc[moveCount]=setPoz(ilkpoz.dusey,i+1);
+    for(i=0; i<8; i++) { //vertical move
+        if(i !=firstPos.horizontal-1) {
+            result[moveCount]=setPos(firstPos.vertical,i+1);
             moveCount++;
         }
     }
 
-    for(i=0; i<8; i++) { //yatay gitme
-        if(i !=(short)(ilkpoz.dusey-65)) {
-            sonuc[moveCount]=setPoz((char)(i+65),ilkpoz.yatay);
+    for(i=0; i<8; i++) { //horizontal move
+        if(i !=(short)(firstPos.vertical-65)) {
+            result[moveCount]=setPos((char)(i+65),firstPos.horizontal);
             moveCount++;
         }
     }
 
-    int birim=1;
+    int unit=1;
     short control =0;
 
-    for(i=0; i<8; i++) { //ust capraz gitme
-        if(i<ilkpoz.yatay &&control !=1) {
-            for(j=0; j<(int)(ilkpoz.dusey-65)  ; j++) {
-                sonuc[moveCount]=setPoz((char)((int)(ilkpoz.dusey-birim)),ilkpoz.yatay+birim);
+    for(i=0; i<8; i++) { //up cross move
+        if(i<firstPos.horizontal &&control !=1) {
+            for(j=0; j<(int)(firstPos.vertical-65)  ; j++) {
+                result[moveCount]=setPos((char)((int)(firstPos.vertical-unit)),firstPos.horizontal+unit);
                 moveCount++;
-                birim++;
+                unit++;
             }
 
             control=1;
 
-        } else if(i>ilkpoz.yatay&&control ==1 ) {
-            birim=1;
+        } else if(i>firstPos.horizontal&&control ==1 ) {
+            unit=1;
 
-            for(j=0; j<(8- ((int)(ilkpoz.dusey)-65)) ; j++) {
-                sonuc[moveCount]=setPoz((char)((int)(ilkpoz.dusey+birim)),ilkpoz.yatay+birim);
+            for(j=0; j<(8- ((int)(firstPos.vertical)-65)) ; j++) {
+                result[moveCount]=setPos((char)((int)(firstPos.vertical+unit)),firstPos.horizontal+unit);
                 moveCount++;
-                birim++;
+                unit++;
             }
 
             control =0;
@@ -112,25 +113,25 @@ struct poz *haraketVezir(struct poz ilkpoz) {
 
     }
 
-    birim=1;
+    unit=1;
 
-    for(i=0; i<8; i++) { //alt capraz gitme
-        if(i<ilkpoz.yatay &&control !=1) {
-            for(j=0; j<(int)(ilkpoz.dusey-65)  ; j++) {
-                sonuc[moveCount]=setPoz((char)((int)(ilkpoz.dusey-birim)),ilkpoz.yatay-birim);
+    for(i=0; i<8; i++) { //down cross move
+        if(i<firstPos.horizontal &&control !=1) {
+            for(j=0; j<(int)(firstPos.vertical-65)  ; j++) {
+                result[moveCount]=setPos((char)((int)(firstPos.vertical-unit)),firstPos.horizontal-unit);
                 moveCount++;
-                birim++;
+                unit++;
             }
 
             control=1;
 
-        } else if(i>ilkpoz.yatay&&control ==1 ) {
-            birim=1;
+        } else if(i>firstPos.horizontal&&control ==1 ) {
+            unit=1;
 
-            for(j=0; j<(8- ((int)(ilkpoz.dusey)-65)) ; j++) {
-                sonuc[moveCount]=setPoz((char)((int)(ilkpoz.dusey+birim)),ilkpoz.yatay-birim);
+            for(j=0; j<(8- ((int)(firstPos.vertical)-65)) ; j++) {
+                result[moveCount]=setPos((char)((int)(firstPos.vertical+unit)),firstPos.horizontal-unit);
                 moveCount++;
-                birim++;
+                unit++;
             }
 
             control =0;
@@ -138,33 +139,33 @@ struct poz *haraketVezir(struct poz ilkpoz) {
 
     }
 
-    return sonuc;
+    return result;
 }
-struct poz *haraketFil(struct poz ilkpoz) {
-    struct poz *sonuc=malloc(16*sizeof(struct poz));
+struct pos *moveBishop(struct pos firstPos) {
+    struct pos *result=malloc(16*sizeof(struct pos));
 
     int moveCount=0;
     int i,j;
-    int birim=1;
+    int unit=1;
     int control =0;
 
-    for(i=0; i<8; i++) { //ust capraz gitme
-        if(i<ilkpoz.yatay &&control !=1) {
-            for(j=0; j<(int)(ilkpoz.dusey-65)  ; j++) {
-                sonuc[moveCount]=setPoz((char)((int)(ilkpoz.dusey-birim)),ilkpoz.yatay+birim);
+    for(i=0; i<8; i++) { //up cross move
+        if(i<firstPos.horizontal &&control !=1) {
+            for(j=0; j<(int)(firstPos.vertical-65)  ; j++) {
+                result[moveCount]=setPos((char)((int)(firstPos.vertical-unit)),firstPos.horizontal+unit);
                 moveCount++;
-                birim++;
+                unit++;
             }
 
             control=1;
 
-        } else if(i>ilkpoz.yatay&&control ==1 ) {
-            birim=1;
+        } else if(i>firstPos.horizontal&&control ==1 ) {
+            unit=1;
 
-            for(j=0; j<(8- ((int)(ilkpoz.dusey)-65)) ; j++) {
-                sonuc[moveCount]=setPoz((char)((int)(ilkpoz.dusey+birim)),ilkpoz.yatay+birim);
+            for(j=0; j<(8- ((int)(firstPos.vertical)-65)) ; j++) {
+                result[moveCount]=setPos((char)((int)(firstPos.vertical+unit)),firstPos.horizontal+unit);
                 moveCount++;
-                birim++;
+                unit++;
             }
 
             control =0;
@@ -172,25 +173,25 @@ struct poz *haraketFil(struct poz ilkpoz) {
 
     }
 
-    birim=1;
+    unit=1;
 
-    for(i=0; i<8; i++) { //alt capraz gitme
-        if(i<ilkpoz.yatay &&control !=1) {
-            for(j=0; j<(int)(ilkpoz.dusey-65)  ; j++) {
-                sonuc[moveCount]=setPoz((char)((int)(ilkpoz.dusey-birim)),ilkpoz.yatay-birim);
+    for(i=0; i<8; i++) { //down cross move
+        if(i<firstPos.horizontal &&control !=1) {
+            for(j=0; j<(int)(firstPos.vertical-65)  ; j++) {
+                result[moveCount]=setPos((char)((int)(firstPos.vertical-unit)),firstPos.horizontal-unit);
                 moveCount++;
-                birim++;
+                unit++;
             }
 
             control=1;
 
-        } else if(i>ilkpoz.yatay&&control ==1 ) {
-            birim=1;
+        } else if(i>firstPos.horizontal&&control ==1 ) {
+            unit=1;
 
-            for(j=0; j<(8- ((int)(ilkpoz.dusey)-65)) ; j++) {
-                sonuc[moveCount]=setPoz((char)((int)(ilkpoz.dusey+birim)),ilkpoz.yatay-birim);
+            for(j=0; j<(8- ((int)(firstPos.vertical)-65)) ; j++) {
+                result[moveCount]=setPos((char)((int)(firstPos.vertical+unit)),firstPos.horizontal-unit);
                 moveCount++;
-                birim++;
+                unit++;
             }
 
             control =0;
@@ -198,55 +199,55 @@ struct poz *haraketFil(struct poz ilkpoz) {
 
     }
 
-    return sonuc;
+    return result;
 }
 
-struct poz *haraketKale(struct poz ilkpoz) {
-    struct poz *sonuc=malloc(16*sizeof(struct poz));
+struct pos *moveRook(struct pos firstPos) {
+    struct pos *result=malloc(16*sizeof(struct pos));
     int moveCount=0;
     int i;
 
-    for(i=0; i<8; i++) { //dusey gitme
-        if(i !=ilkpoz.yatay-1) {
-            sonuc[moveCount]=setPoz(ilkpoz.dusey,i+1);
+    for(i=0; i<8; i++) { //vertical gitme
+        if(i !=firstPos.horizontal-1) {
+            result[moveCount]=setPos(firstPos.vertical,i+1);
             moveCount++;
         }
     }
 
-    for(i=0; i<8; i++) { //yatay gitme
-        if(i !=(int)(ilkpoz.dusey-65)) {
-            sonuc[moveCount]=setPoz((char)(i+65),ilkpoz.yatay);
+    for(i=0; i<8; i++) { //horizontal gitme
+        if(i !=(int)(firstPos.vertical-65)) {
+            result[moveCount]=setPos((char)(i+65),firstPos.horizontal);
             moveCount++;
         }
     }
 
-    return sonuc;
+    return result;
 }
-struct poz *haraketPiyon(struct poz ilkpoz) {
-    struct poz *sonuc=malloc(1*sizeof(struct poz));
-    sonuc[0]=setPoz((char)(ilkpoz.dusey ),ilkpoz.yatay+1);
-    return sonuc;
+struct pos *movePawn(struct pos firstPos) {
+    struct pos *result=malloc(1*sizeof(struct pos));
+    result[0]=setPos((char)(firstPos.vertical ),firstPos.horizontal+1);
+    return result;
 }
-struct poz *haraketAt(struct poz ilkpoz) {
-    struct poz *sonuc=malloc(8*sizeof(struct poz));
-    sonuc[0]=setPoz((char)((int)(ilkpoz.dusey+2)),ilkpoz.yatay+1);
-    sonuc[1]=setPoz((char)((int)(ilkpoz.dusey-2)),ilkpoz.yatay+1);
-    sonuc[2]=setPoz((char)((int)(ilkpoz.dusey+2)),ilkpoz.yatay-1);
-    sonuc[3]=setPoz((char)((int)(ilkpoz.dusey-2)),ilkpoz.yatay-1);
-    sonuc[4]=setPoz((char)((int)(ilkpoz.dusey+1)),ilkpoz.yatay+2);
-    sonuc[5]=setPoz((char)((int)(ilkpoz.dusey+1)),ilkpoz.yatay-2);
-    sonuc[6]=setPoz((char)((int)(ilkpoz.dusey-1)),ilkpoz.yatay+2);
-    sonuc[7]=setPoz((char)((int)(ilkpoz.dusey-1)),ilkpoz.yatay-2);
-    return sonuc;
+struct pos *moveKnight(struct pos firstPos) {
+    struct pos *result=malloc(8*sizeof(struct pos));
+    result[0]=setPos((char)((int)(firstPos.vertical+2)),firstPos.horizontal+1);
+    result[1]=setPos((char)((int)(firstPos.vertical-2)),firstPos.horizontal+1);
+    result[2]=setPos((char)((int)(firstPos.vertical+2)),firstPos.horizontal-1);
+    result[3]=setPos((char)((int)(firstPos.vertical-2)),firstPos.horizontal-1);
+    result[4]=setPos((char)((int)(firstPos.vertical+1)),firstPos.horizontal+2);
+    result[5]=setPos((char)((int)(firstPos.vertical+1)),firstPos.horizontal-2);
+    result[6]=setPos((char)((int)(firstPos.vertical-1)),firstPos.horizontal+2);
+    result[7]=setPos((char)((int)(firstPos.vertical-1)),firstPos.horizontal-2);
+    return result;
 }
 
-void hareketYazdir(int **board,char tas, struct poz ilkPozisyon) {
+void printMove(int **board,char pieces, struct pos firstPosition) {
     int i;
-    struct poz *(*satrancFonksiyonlari[6])(struct poz)= {haraketSah,haraketVezir,haraketFil,haraketKale,haraketPiyon,haraketAt};
+    struct pos *(*chessFuncs[6])(struct pos)= {moveKing,moveQueen,moveBishop,moveRook,movePawn,moveKnight};
 
-    if(tas=='S') {
-        struct poz *result=satrancFonksiyonlari[0](ilkPozisyon);
-        addBoard(board,ilkPozisyon,2);
+    if(pieces=='K') {
+        struct pos *result=chessFuncs[0](firstPosition);
+        addBoard(board,firstPosition,2);
 
         for(i=0; i<8; i++) {
             addBoard(board,result[i],1);
@@ -254,43 +255,43 @@ void hareketYazdir(int **board,char tas, struct poz ilkPozisyon) {
 
     }
 
-    if(tas=='V') {
-        struct poz *result=satrancFonksiyonlari[1](ilkPozisyon);
-        addBoard(board,ilkPozisyon,2);
+    if(pieces=='Q') {
+        struct pos *result=chessFuncs[1](firstPosition);
+        addBoard(board,firstPosition,2);
 
         for(i=0; i<64; i++) {
             addBoard(board,result[i],1);
         }
     }
 
-    if(tas=='F') {
-        struct poz *result=satrancFonksiyonlari[2](ilkPozisyon);
-        addBoard(board,ilkPozisyon,2);
+    if(pieces=='B') {
+        struct pos *result=chessFuncs[2](firstPosition);
+        addBoard(board,firstPosition,2);
 
         for(i=0; i<16; i++) {
             addBoard(board,result[i],1);
         }
     }
 
-    if(tas=='K') {
-        struct poz *result=satrancFonksiyonlari[3](ilkPozisyon);
-        addBoard(board,ilkPozisyon,2);
+    if(pieces=='R') {
+        struct pos *result=chessFuncs[3](firstPosition);
+        addBoard(board,firstPosition,2);
 
         for(i=0; i<16; i++) {
             addBoard(board,result[i],1);
         }
     }
 
-    if(tas=='P') {
-        struct poz *result=satrancFonksiyonlari[4](ilkPozisyon);
-        addBoard(board,ilkPozisyon,2);
+    if(pieces=='P') {
+        struct pos *result=chessFuncs[4](firstPosition);
+        addBoard(board,firstPosition,2);
         addBoard(board,result[0],1);
 
     }
 
-    if(tas=='A') {
-        struct poz *result=satrancFonksiyonlari[5](ilkPozisyon);
-        addBoard(board,ilkPozisyon,2);
+    if(pieces=='k') {
+        struct pos *result=chessFuncs[5](firstPosition);
+        addBoard(board,firstPosition,2);
 
         for(i=0; i<8; i++) {
             addBoard(board,result[i],1);

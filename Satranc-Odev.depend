@@ -4,17 +4,17 @@
 	<stdlib.h>
 	"satranc.h"
 
-1608833207 source:/home/mevlutt/c-calisma/Satranc-Odev/main.c
+1617630343 source:/home/mevlutt/c-calisma/Satranc-Odev/main.c
 	<stdio.h>
 	<stdlib.h>
 	"chessLib.h"
 
 1608467610 /home/mevlutt/c-calisma/Satranc-Odev/satranc.h
 
-1608833207 source:/home/mevlutt/c-calisma/Satranc-Odev/chessLib.c
+1617630394 source:/home/mevlutt/c-calisma/Satranc-Odev/chessLib.c
 	<stdio.h>
 	<stdlib.h>
 	"chessLib.h"
 
-1608482340 /home/mevlutt/c-calisma/Satranc-Odev/chessLib.h
+1617630343 /home/mevlutt/c-calisma/Satranc-Odev/chessLib.h
 

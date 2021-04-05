@@ -3,11 +3,11 @@
 int **createBoard();
 void printBoard(int **);
 void cleanBoard(int **);
-struct poz *hareketSah(struct poz );
-struct poz *hareketVezir(struct poz );
-struct poz *hareketFil(struct poz );
-struct poz *hareketAt(struct poz );
-struct poz *hareketKale(struct poz );
-struct poz *hareketPiyon(struct poz );
-void addBoard(int **,struct poz ,short );
+struct pos *moveKing(struct pos );
+struct pos *moveQueen(struct pos );
+struct pos *moveBishop(struct pos );
+struct pos *moveKnight(struct pos );
+struct pos *moveRook(struct pos );
+struct pos *movePawn(struct pos );
+void addBoard(int **,struct pos ,short );
 #endif // SATRANC_C
